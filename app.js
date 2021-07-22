@@ -1,7 +1,8 @@
-var createError = require('http-errors');
 var express = require('express');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+var mongoose = require('mongoose');
+var createError = require('http-errors');
 
 var orderRouter = require('./routes/order');
 
@@ -23,5 +24,12 @@ app.use(function(req, res, next) {
 app.use(function(err, req, res, next) {
   res.status(err.status || 500).send('error');
 });
+
+//서버 실행과 동시에 mongodb 접속
+mongoose.Promise = global.Promise;
+
+mongoose.connect("mongodb://localhost:27017/flex", { useNewUrlParser: true, useUnifiedTopology: true })
+.then(() => {console.log("mongo connected");})
+.catch((reason) => {console.log(reason);});
 
 module.exports = app;
