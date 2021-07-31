@@ -13,6 +13,52 @@ const isNullOrEmpty = (str) => {
   return result;
 }
 
+const getOrders = async (userId) => {
+  const result = {
+    isSuccess: false,
+    reason: "Please contact the customer service center.",
+    orders: null
+  }
+
+  try{
+    const orders = await orderSchema.getOrders(userId);
+    result.isSuccess = true;
+    result.reason = null;
+    result.orders = orders;
+  }
+  catch(err){
+    result.isSuccess = false;
+    result.reason = "Please contact the customer service center.";
+  }
+  finally{
+    return result;
+  }
+}
+
+router.post('/orders', async function(req, res, next) {
+  const result = {
+    isSuccess: false,
+    reason: "Please contact the customer service center.",
+    orders: null
+  }
+
+  try{
+    const userId = req.body.userId;
+    const ordersData = await getOrders(userId);
+    Object.keys(result).forEach((key) => {
+      result[key] = ordersData[key];
+    });
+  }
+  catch(err){
+    console.log(err);
+    result.isSuccess = false;
+    result.reason = "Please contact the customer service center.";
+  }
+  finally{
+    res.send(result);
+  }
+})
+
 router.post('/create_order', async function (req, res, next) {
   var session = null;
   var sessionId = 0;

@@ -11,6 +11,25 @@ const orderSchema = new mongoose.Schema({
 
 orderSchema.plugin(mongooseSeq(mongoose), {inc_field: 'orderId'});
 
+orderSchema.statics.getOrders = async function (userId, session) {
+  const result = null;
+
+  try{
+    if(session === undefined){
+      result = await this.find({ userId: userId }).exec();
+    }
+    else {
+      result = await this.find({ userId: userId }).session(session).exec();
+    }
+  }
+  catch(err){
+    result = null;
+  }
+  finally{
+    console.log(result);
+    return result;
+  }
+}
 
 orderSchema.statics.createOrder = async function(userId, orderProduct, session){
   var result = await this.create([{
